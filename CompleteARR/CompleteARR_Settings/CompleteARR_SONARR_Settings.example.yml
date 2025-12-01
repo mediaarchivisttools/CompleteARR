@@ -1,0 +1,236 @@
+#####################################################################
+# CompleteARR_SONARR_Settings.yml
+# Global configuration for the CompleteARR Sonarr auto-promotion script.
+# Edit values in this file to match your environment.
+#
+# 💡 TIP: NOT SURE WHICH PROFILES OR FOLDERS TO USE?
+# Run 'CompleteARR_FetchInfo_Launcher.ps1' to generate a log file
+# containing all your valid Quality Profile Names and Root Paths!
+#####################################################################
+
+Sonarr:
+  Url: http://localhost:8989            # Base URL of your Sonarr server and port (no trailing '/')
+  ApiKey: YOUR_API_KEY_HERE             # Sonarr API key from Settings > General
+
+Logging:
+  LogFileName: CompleteARR.log          # Base log file name; timestamp is added automatically
+  LogToConsole: true                    # Write colored logs to the console window
+  LogToFile: true                       # Write detailed logs to a log file in the same folder as the scripts
+  MinLevel: Debug                       # Minimum level to log: Debug | Info | Warning | Error | Success
+  UseColors: true                       # Enable colored console output
+  ThrottleMs: 200                       # Delay in milliseconds between Sonarr API calls (helps avoid overload)
+
+Behavior:
+  DryRun: false                         # If true, NO CHANGES are sent to Sonarr; logs only what would happen
+  GraceDays: 15                         # Days to wait after an episode's air date before DEMOTING a "complete" show
+  PreflightSeconds: 0                   # Optional delay in seconds before the script starts doing work
+  PostMoveWaitSeconds: 2                # Optional short delay after changing a series (helps Sonarr settle)
+  MonitorNonSpecials: true              # Always monitor all seasons/episodes that are NOT specials (Season 0)
+  UnmonitorSpecialsWhenIncomplete: true # In "Incomplete" profiles, specials will be UNmonitored
+  MonitorSpecialsWhenComplete: true     # In "Complete" profiles, all specials will be monitored
+  SpecialsDoNotBlockCompletion: true    # Specials are ignored when deciding if a show is "complete"
+  TreatUnknownAirDateAsOld: false       # If true, episodes with NO air date are treated as older than graceDays when demoting *Leave this on false*
+
+#####################################################################
+# Sets: mappings between INCOMPLETE and COMPLETE quality profiles and root folders.
+#
+# Each set describes a "media type", AKA set name. This is only used for logging and to keep things clear.
+# - The "Incomplete" profile/root is where shows start or end up if they have missing episodes.
+# - Once all non-special episodes are downloaded, the show is promoted to the corresponding "Complete" profile/root.
+# - If missing episodes appear and are older than graceDays, the show is demoted back to the "Incomplete" profile/root.
+#####################################################################
+
+Sets:
+  - Media Type: Adult (HD)
+    Incomplete Profile Name: Incomplete - Adult
+    Incomplete Root Folder: /data/Media/Show Collection/Incomplete/Adult
+    Complete Profile Name: Complete - Adult
+    Complete Root Folder: /data/Media/Show Collection/Complete/Adult
+
+  - Media Type: Family (HD)
+    Incomplete Profile Name: Incomplete - Family
+    Incomplete Root Folder: /data/Media/Show Collection/Incomplete/Family
+    Complete Profile Name: Complete - Family
+    Complete Root Folder: /data/Media/Show Collection/CompleteFamily
+
+  - Media Type: Anime (HD)
+    Incomplete Profile Name: Incomplete - Anime
+    Incomplete Root Folder: /data/Media/Show Collection/Incomplete/Anime Adult
+    Complete Profile Name: Complete - Anime
+    Complete Root Folder: /data/Media/Show Collection/Complete/Anime Adult
+
+  - Media Type: Anime Family (HD)
+    Incomplete Profile Name: Incomplete - Anime Family
+    Incomplete Root Folder: /data/Media/Show Collection/Incomplete/Anime Family
+    Complete Profile Name: Complete - Anime Family
+    Complete Root Folder: /data/Media/Show Collection/Complete/Anime Family
+
+
+#####################################################################
+# AutoSorter configuration
+# This controls CompleteARR_AutoSorter.ps1
+#####################################################################
+
+AutoSorter:
+  Enabled: true                        # Master switch for the auto sorter
+
+  ###### SOURCE PROFILES TO SORT ######################################
+  # Only series using these Sonarr quality profiles will be considered
+  # by the auto sorter. Everything else is assumed to already be in
+  # the correct library and is ignored. This is great for user requests
+  # or unsorted content grabbed by lists or bots.
+  #
+  #You can use as many source profiles as you like, here are some examples:
+  #
+  SourceProfiles:
+    - Incomplete - Unsorted
+    - Incomplete - User Requests - Anime
+    - Incomplete - User Requests - Unsorted
+
+  ###### FAMILY STRICTNESS / KID-SAFE FILTER ##########################
+  # If true, "family" only means clearly kid/family-oriented shows.
+  # Under10 / preteen content that looks more like teen/adult comedy
+  # (e.g. The Simpsons, Home Movies, The Critic) will be treated as
+  # teen content and routed to the adult libraries instead.
+  StrictFamilyMode: true
+
+  # If any of these genres are present on the series, and the
+  # age group is under10 or preteen, the show will be allowed into the
+  # family / animeFamily target sets when strictFamilyMode is true.
+  FamilyGenres:
+    - Family
+    - Children
+    - Kids
+
+  # If the Sonarr "network" field contains any of these values
+  # (case-insensitive substring match), the show is also considered
+  # kid/family content for strictFamilyMode.
+  FamilyNetworks:
+    - Disney Channel
+    - Disney XD
+    - Disney Junior
+    - Nickelodeon
+    - Nick Jr.
+    - Cartoon Network
+    - Boomerang
+    - PBS Kids
+    - Universal Kids
+
+  # Genres that should NEVER be treated as "kids/family"
+  NonFamilyGenres:
+    - Reality
+    - Game Show
+    - Documentary
+    - Home and Garden
+    - Cooking
+    - Talk Show
+    - News
+
+  ###### SORT TARGETS ##################################################
+  # These define WHERE series should be sent based on the sorter's
+  # classification. Each key (adult, family, animeAdult, animeFamily)
+  # maps to:
+  #   - QualityProfile : the target Sonarr QUALITY PROFILE name
+  #   - RootFolder     : the target Sonarr ROOT FOLDER
+  #
+  # NOTE: We point everything at your existing *INCOMPLETE* profiles
+  # and the shared Incomplete root. The main CompleteARR engine will
+  # then handle promotion/demotion to COMPLETE as usual.
+  SortTargets:
+    Adult:
+      QualityProfile: Incomplete - Adult
+      RootFolder: /data/Media/Show Collection/Incomplete/Adult
+
+    Family:
+      QualityProfile: Incomplete - Family
+      RootFolder: /data/Media/Show Collection/Incomplete/Family
+
+    AnimeAdult:
+      QualityProfile: Incomplete - Anime
+      RootFolder: /data/Media/Show Collection/Incomplete/Anime Adult
+
+    AnimeFamily:
+      QualityProfile: Incomplete - Anime Family
+      RootFolder: /data/Media/Show Collection/Incomplete/Anime Family
+
+  ###### TAG OVERRIDES #################################################
+  # TagsOverrideOrder is a list of Sonarr TAG NAMES that override the
+  # normal rating-based routing, in PRIORITY order (first match wins).
+  #
+  # You will need to create matching tags in Sonarr (Settings > Tags)
+  # with these exact labels:
+  #   - LibraryOverride-Anime
+  #   - LibraryOverride-Family
+  #   - LibraryOverride-Adult
+  #   - LibraryOverride-Xplicit
+  #
+  # Behavior:
+  #   - LibraryOverride-Family  -> force FAMILY target
+  #   - LibraryOverride-Adult   -> force ADULT target
+  #   - LibraryOverride-Xplicit -> treat as "xplicit" age group
+  #   - LibraryOverride-Anime   -> force anime mode (still uses rating
+  #                                to decide family vs adult target set)
+  TagsOverrideOrder:
+    - LibraryOverride-Anime
+    - LibraryOverride-Family
+    - LibraryOverride-Adult
+    - LibraryOverride-Xplicit
+
+  ###### ROUTING TABLES ################################################
+  # Internal age groups:
+  #   - under10 : preschool / early kids
+  #   - preteen : 9-12
+  #   - teen    : 13-16
+  #   - adult   : 17+
+  #   - xplicit : very explicit content
+  #   - unrated : unknown rating
+  #
+  # These tables say, for each age group, which TARGET SET to send
+  # the show to for NON-ANIME vs ANIME.
+  Routing:
+    RouteNonAnime:
+      # Non-anime routing (live action / western cartoons)
+      under10: Family       # Very young kids -> family library
+      preteen: Family       # Preteens -> family library
+      teen: Adult           # Teens -> adult library (teen-targeted but not little kids)
+      adult: Adult          # Normal adult shows
+      xplicit: Adult        # Explicit content forces adult target set
+      unrated: Adult        # Unknown ratings default to adult
+
+    RouteAnime:
+      # Anime routing
+      under10: AnimeFamily  # Young-kid anime -> anime family library
+      preteen: AnimeFamily  # Preteen anime -> anime family
+      teen: AnimeAdult      # Teen anime -> anime adult
+      adult: AnimeAdult     # Adult anime -> anime adult
+      xplicit: AnimeAdult   # Explicit anime -> anime adult
+      unrated: AnimeAdult   # Unknown ratings default to anime adult
+
+  ###### RATING -> AGE GROUP MAPPING ###################################
+  # This maps rating/certification strings to the internal age groups.
+  # Matching is case-insensitive and substring-based:
+  #   - If the certification string CONTAINS the key, we map to the
+  #     corresponding age group.
+  RatingToAgeGroup:
+    # US TV ratings
+    TV-Y: under10
+    TV-Y7: under10
+    TV-Y7-FV: under10
+    TV-G: under10
+    TV-PG: preteen
+    TV-14: teen
+    TV-MA: adult
+
+    # MPAA film ratings
+    G: under10
+    PG: under10
+    PG-13: teen
+    R: adult
+    NC-17: adult
+
+    # Common numeric/international ratings
+    12: preteen
+    12A: preteen
+    15: teen
+    16: teen
+    18: adult

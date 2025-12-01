@@ -1,0 +1,188 @@
+#####################################################################
+# CompleteARR_RADARR_Settings.yml
+# Global configuration for the CompleteARR Radarr auto-sorting script.
+# Edit values in this file to match your environment.
+#
+# 💡 TIP: NOT SURE WHICH PROFILES OR FOLDERS TO USE?
+# Run 'CompleteARR_FetchInfo_Launcher.ps1' to generate a log file
+# containing all your valid Quality Profile Names and Root Paths!
+#####################################################################
+
+Radarr:
+  Url: http://localhost:7878/           # Base URL of your Radarr server and port (no trailing '/')
+  ApiKey: YOUR_API_KEY_HERE             # Radarr API key from Settings > General
+
+Logging:
+  LogFileName: CompleteARR.log          # Base log file name; timestamp is added automatically
+  LogToConsole: true                    # Write colored logs to the console window
+  LogToFile: true                       # Write detailed logs to a log file in the same folder as the scripts
+  MinLevel: Debug                       # Minimum level to log: Debug | Info | Warning | Error | Success
+  UseColors: true                       # Enable colored console output
+  ThrottleMs: 200                       # Delay in milliseconds between Radarr API calls (helps avoid overload)
+
+Behavior:
+  DryRun: false                         # If true, NO CHANGES are sent to Radarr; logs only what would happen
+  PreflightSeconds: 0                   # Optional delay in seconds before the script starts doing work
+  PostMoveWaitSeconds: 0                # Optional short delay after changing a movie (helps Radarr settle)
+
+#####################################################################
+# FilmEngine configuration
+# This controls CompleteARR_RADARR_FilmEngine.ps1
+#
+# Unlike Sonarr, we don't have incomplete/complete folders.
+# Instead, we enforce that each quality profile has its correct root folder.
+# This ensures movies stay organized in their proper libraries.
+#####################################################################
+
+FilmEngine:
+  Enabled: true
+  ProfileRootMappings:
+    Adult: /data/Media/Movie Collection/Adult
+    Family: /data/Media/Movie Collection/Family
+    Anime: /data/Media/Movie Collection/Anime Adult
+    Anime Family: /data/Media/Movie Collection/Anime Family
+
+#####################################################################
+# AutoSorter configuration
+# This controls CompleteARR_RADARR_AutoSorter.ps1
+#####################################################################
+
+AutoSorter:
+  Enabled: true                        # Master switch for the auto sorter
+
+  ###### SOURCE PROFILES TO SORT ######################################
+  # Only movies using these Radarr quality profiles will be considered
+  # by the auto sorter. Everything else is assumed to already be in
+  # the correct library and is ignored.
+  SourceProfiles:
+    - Unsorted
+
+  ###### FAMILY STRICTNESS / KID-SAFE FILTER ##########################
+  # If true, "family" only means clearly kid/family-oriented movies.
+  # Under10 / preteen content that looks more like teen/adult content
+  # will be treated as teen content and routed to the adult libraries instead.
+  StrictFamilyMode: true
+
+  # If any of these genres are present on the movie, and the
+  # age group is under10 or preteen, the movie will be allowed into the
+  # family / animeFamily target sets when strictFamilyMode is true.
+  FamilyGenres:
+    - Family
+    - Animation
+    - Children
+    - Comedy
+
+  # If the Radarr "studio" field contains any of these values
+  # (case-insensitive substring match), the movie is also considered
+  # kid/family content for strictFamilyMode.
+  FamilyNetworks:
+    - Disney
+    - Nickelodeon
+    - Cartoon Network
+    - PBS Kids
+
+  # Genres that should NEVER be treated as "kids/family"
+  NonFamilyGenres:
+    - Horror
+    - Thriller
+    - Crime
+    - War
+    - Film-Noir
+
+  ###### SORT TARGETS ##################################################
+  # These define WHERE movies should be sent based on the sorter's
+  # classification. Each key (adult, family, animeAdult, animeFamily)
+  # maps to:
+  #   - QualityProfile : the target Radarr QUALITY PROFILE name
+  #   - RootFolder     : the target Radarr ROOT FOLDER
+  SortTargets:
+    Adult:
+      QualityProfile: Adult
+      RootFolder: /data/Media/Movie Collection/Adult
+
+    Family:
+      QualityProfile: Family
+      RootFolder: /data/Media/Movie Collection/Family
+
+    AnimeAdult:
+      QualityProfile: Anime
+      RootFolder: /data/Media/Movie Collection/Anime Adult
+
+    AnimeFamily:
+      QualityProfile: Anime Family
+      RootFolder: /data/Media/Movie Collection/Anime Family
+
+  ###### TAG OVERRIDES #################################################
+  # TagsOverrideOrder is a list of Radarr TAG NAMES that override the
+  # normal rating-based routing, in PRIORITY order (first match wins).
+  #
+  # You will need to create matching tags in Radarr (Settings > Tags)
+  # with these exact labels:
+  #   - LibraryOverride-Anime
+  #   - LibraryOverride-Family
+  #   - LibraryOverride-Adult
+  #   - LibraryOverride-Xplicit
+  #
+  # Behavior:
+  #   - LibraryOverride-Family  -> force FAMILY target
+  #   - LibraryOverride-Adult   -> force ADULT target
+  #   - LibraryOverride-Xplicit -> treat as "xplicit" age group
+  #   - LibraryOverride-Anime   -> force anime mode (still uses rating
+  #                                to decide family vs adult target set)
+  TagsOverrideOrder:
+    - LibraryOverride-Anime
+    - LibraryOverride-Family
+    - LibraryOverride-Adult
+    - LibraryOverride-Xplicit
+
+  ###### ROUTING TABLES ################################################
+  # Internal age groups:
+  #   - under10 : preschool / early kids
+  #   - preteen : 9-12
+  #   - teen    : 13-16
+  #   - adult   : 17+
+  #   - xplicit : very explicit content
+  #   - unrated : unknown rating
+  #
+  # These tables say, for each age group, which TARGET SET to send
+  # the movie to for NON-ANIME vs ANIME.
+  Routing:
+    RouteNonAnime:
+      # Non-anime routing (live action / western animation)
+      under10: Family       # Very young kids -> family library
+      preteen: Family       # Preteens -> family library
+      teen: Adult           # Teens -> adult library (teen-targeted but not little kids)
+      adult: Adult          # Normal adult movies
+      xplicit: Adult        # Explicit content forces adult target set
+      unrated: Adult        # Unknown ratings default to adult
+
+    RouteAnime:
+      # Anime routing
+      under10: AnimeFamily  # Young-kid anime -> anime family library
+      preteen: AnimeFamily  # Preteen anime -> anime family
+      teen: AnimeAdult      # Teen anime -> anime adult
+      adult: AnimeAdult     # Adult anime -> anime adult
+      xplicit: AnimeAdult   # Explicit anime -> anime adult
+      unrated: AnimeAdult   # Unknown ratings default to anime adult
+
+  ###### RATING -> AGE GROUP MAPPING ###################################
+  # This maps rating/certification strings to the internal age groups.
+  # Matching is case-insensitive and substring-based:
+  #   - If the certification string CONTAINS the key, we map to the
+  #     corresponding age group.
+  RatingToAgeGroup:
+    # MPAA film ratings
+    G: under10
+    PG: preteen
+    PG-13: teen
+    R: adult
+    NC-17: xplicit
+    NR: unrated
+
+    # US TV ratings
+    TV-Y: under10
+    TV-Y7: under10
+    TV-G: under10
+    TV-PG: preteen
+    TV-14: teen
+    TV-MA: adult
