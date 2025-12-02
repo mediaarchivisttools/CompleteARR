@@ -1,0 +1,49 @@
+#####################################################################
+# CompleteARR_RADARR_Settings.yml
+# Global configuration for the CompleteARR Radarr FilmEngine script.
+# Edit values in this file to match your environment.
+#
+# 💡 TIP: NOT SURE WHICH PROFILES OR FOLDERS TO USE?
+# Run 'CompleteARR_FetchInfo_Launcher.ps1' to generate a log file
+# containing all your valid Quality Profile Names and Root Paths!
+#####################################################################
+
+Radarr:
+  Url: http://localhost:7878/           # Base URL of your Radarr server and its port (no trailing '/')
+  ApiKey: YOUR_API_KEY_HERE             # Radarr API key from Settings > General
+
+Logging:
+  LogFileName: CompleteARR.log          # Base log file name; timestamp is added automatically
+  LogToConsole: true                    # Write colored logs to the console window
+  LogToFile: true                       # Write detailed logs to a log file in the same folder as the scripts
+  MinLevel: Debug                       # Minimum level to log: Debug | Info | Warning | Error | Success
+  UseColors: true                       # Enable colored console output
+  ThrottleMs: 200                       # Delay in milliseconds between Radarr API calls (helps avoid overload)
+
+Behavior:
+  DryRun: true                         # If true, NO CHANGES are sent to Radarr; logs only what would happen
+  PreflightSeconds: 0                   # Optional delay in seconds before the script starts doing work
+  PostMoveWaitSeconds: 0                # Optional short delay after changing a movie (helps Radarr settle on slow PCs)
+
+#####################################################################
+# FilmEngine configuration
+#
+# Unlike CompleteARR's SeriesEngine, the FilmEngine does not have incomplete/complete folders.
+# Instead, we enforce that each quality profile has its correct root folder.
+# This ensures movies stay organized in their proper libraries.
+#
+# You can have as many profiles/folders as you like, and even set
+# profiles to share the same roots if you want. 
+# The config below is just what I use.
+#
+# Run Fetchinfo.ps1 to get your Quality Profile names and Root Paths
+# Uncomment the FilmEngine section below and edit to match your FetchInfo results.
+#####################################################################
+
+#FilmEngine:
+#  Enabled: true
+#  ProfileRootMappings: # Quality Profile: Root Folder
+#    Adult: /data/Media/Movie Collection/Adult
+#    Family: /data/Media/Movie Collection/Family
+#    Anime Adult: /data/Media/Movie Collection/Anime Adult
+#    Anime Family: /data/Media/Movie Collection/Anime Family
