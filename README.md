@@ -1,169 +1,131 @@
-# 🎯 CompleteARR - Your Automated Media Librarian
+![CompleteARR Logo](CompleteARR_Logos/CompleteARR_Logo_Header.png)
 
-CompleteARR is a powerful tool that automatically organizes your TV shows and movies in **Sonarr** and **Radarr**. Think of it as your personal media librarian that:
+# CompleteARR - All or Nothing!
 
-- **Sorts new content** into the right categories (Family, Adult, Anime)
-- **Moves completed shows** to your main library when they're ready
-- **Keeps your library clean** by hiding incomplete content
-- **Helps protect younger viewers** by keeping age-appropriate content separate
-- **Monitors all bonus content** (specials) after regular episodes are complete
+CompleteARR is your automated media librarian obsessed with making sure all your films are in the right Root Folders and 
+your series only show up on Plex/Jellyfin/Emby if they are complete; without any missing episodes.
+
+---
 
 ## 🎪 How It Works
 
 ### 🎬 For TV Shows (Sonarr):
-- **AutoSorter**: Automatically sorts new shows into the right "set" (Family, Adult, Anime) based on content ratings, genres, and tags
-- **Series Engine**: Moves completed shows from "Incomplete" to "Complete" sets and monitors special episodes
+- **Series Engine**: Moves completed shows from "Incomplete" to "Complete" quality profile / root folder sets and monitors special episodes
 
 ### 🎥 For Movies (Radarr):
-- **AutoSorter**: Sorts new movies from unsorted quality profiles into the right categories
 - **Film Engine**: Ensures movies stay in their correct folders based on quality profile mappings
 
-## 📁 Project Structure
-
-### 🎬 Sonarr Scripts:
-- **`CompleteARR_SONARR_Launcher.ps1`** - Runs all Sonarr tools
-- **`CompleteARR_SONARR_AutoSorter.ps1`** - Sorts new shows into the right sets
-- **`CompleteARR_SONARR_SeriesEngine.ps1`** - Manages show completion and special episode monitoring
-
-### 🎥 Radarr Scripts:
-- **`CompleteARR_RADARR_Launcher.ps1`** - Runs all Radarr tools
-- **`CompleteARR_RADARR_AutoSorter.ps1`** - Sorts movies into the right categories
-- **`CompleteARR_RADARR_FilmEngine.ps1`** - Enforces profile-to-folder mappings
-
-### 🛠️ Helper Tools:
-- **`CompleteARR_FetchInfo_Launcher.ps1`** - Essential setup tool that shows your current Quality Profiles and Root Folders
-- **`CompleteARR_Launch_All_Scripts.ps1`** - Runs the full suite of CompleteARR tools
-
-### ⚙️ Configuration:
-- **`CompleteARR_SONARR_Settings.yml`** - Sonarr-specific configuration
-- **`CompleteARR_RADARR_Settings.yml`** - Radarr-specific configuration
+---
 
 ## 🚀 Getting Started
 
-### Step 1: Prerequisites
-- **Sonarr** (for TV shows) and/or **Radarr** (for movies) installed and running
+### Prerequisites
+- **Sonarr** (for series) and/or **Radarr** (for movies) installed and running
 - **PowerShell 7.0** or newer
-- Your media library set up with quality profiles and root folders
 
-### Step 2: Set Up Your Media System
+### Step 1: Open the Settings YMLs
+Open `CompleteARR_SONARR_Settings.yml` & `CompleteARR_RADARR_Settings.yml` in the `CompleteARR_Settings` folder
 
-#### 📺 For Sonarr (TV Shows):
-Create these quality profile pairs (Incomplete/Complete):
+### Step 2: Fill in Your API/IP/Port
+After opening the _Settings.yml files, fill in the API/IP/Port information, but dont proceed any futher down the yml yet.
 
-- **Family**: `Incomplete - Family` / `Complete - Family`
-- **Adult**: `Incomplete - Adult` / `Complete - Adult`  
-- **Anime**: `Incomplete - Anime` / `Complete - Anime`
-- **Anime Family**: `Incomplete - Anime Family` / `Complete - Anime Family`
-- **Unsorted**: For new content (AutoSorter source)
-
-#### 🎬 For Radarr (Movies):
-Create these quality profiles:
-
-- **Family**: `Family`
-- **Adult**: `Adult`
-- **Anime**: `Anime`
-- **Anime Family**: `Anime Family`
-- **Unsorted**: For new content (AutoSorter source)
-
-### Step 3: Easy Setup with FetchInfo Tool
-
-**Run `CompleteARR_FetchInfo_Launcher.ps1` first!**
+### Step 3: Run the FetchInfo Tool
+**Run `CompleteARR_FetchInfo_Launcher.ps1` before doing anything else!**
 
 This tool will:
 - Connect to your Sonarr and Radarr instances
 - Show you all your quality profiles and root folders
-- Generate a log file with all the information you need for configuration
+- Generate a log file (`CompleteARR_Logs/`) with all the information you need for configuration
 
-### Step 4: Configure Your Settings
+If the FetchInfo Tool cannot connect to Sonarr or Radarr then there is something wrong with the config and CompleteARR won't work.
 
-#### For TV Shows (Sonarr):
-1. Copy `CompleteARR_SONARR_Settings.example.yml` to `CompleteARR_SONARR_Settings.yml`
-2. Edit the file with your information from the FetchInfo tool
-3. Set up your Sonarr URL and API key
-4. Configure your sets with PascalCase keys:
-   ```yaml
-   SortTargets:
-     Adult:
-       QualityProfile: "Incomplete - Adult"
-       RootFolder: "/data/Media/Show Collection - Incomplete Default"
-     Family:
-       QualityProfile: "Incomplete - Family" 
-       RootFolder: "/data/Media/Show Collection - Incomplete Family"
-   ```
+### Step 4: Configure Sets (Sonarr) & Mappings (Radarr)
 
-#### For Movies (Radarr):
-1. Edit the settings YML files with your Radarr/Sonarr IP:Port and API
-2. Run the FetchInfo tool via the launcher, then check the logs to see a list of avaliable
-   Quality Profiles and Root Folders.
-3. Edit the Settings.yml with your information from the FetchInfo tool
+#### 📺 For TV Shows (Sonarr) – Define Your “Sets”
+A “Set” is a pair of **Incomplete** and **Complete** quality profiles & root folders. 
+CompleteARR moves shows between them based on episode availability.
 
-### Step 4: Run CompleteARR
+Open `CompleteARR_SONARR_Settings.yml` and fill out the `Sets:` section using the data from the FetchInfo log.
 
-**For Everything:**
+**Example configuration for someone who wants family and anime content separated from their main library can be found in the CompleteARR_SONARR_Settings.example.yml**
+
+**Notes:**
+- `Media Type:` is for logging only. Use your Plex/Jellyfin/Emby library names to stay organized.
+- Your Plex/Jellyfin/Emby series libraries should **only** include the **Complete** root folders.
+
+**Pro Tip:**
+- You could add incomplete folders to an "Incomplete" Plex/Jellyfin/Emby library if you still want to be able to access your incomplete content on Plex/Jellyfin/Emby, but don't want it mixed in with your complete series.
+
+#### 🎬 For Movies (Radarr) – Define Profile‑to‑Root Mappings
+When you match a Quality Profile to a Root Folder with CompleteARR, it automatically checks that your movies are in the right root folder. If they aren’t, CompleteARR moves them for you.
+
+Open `CompleteARR_RADARR_Settings.yml` and fill out the `FilmEngine:` section using the data from the FetchInfo log.
+
+**Format:** `Quality Profile: Root Folder`
+
+**Example configuration for someone who wants family and anime content separated from their main library can be found in the CompleteARR_SONARR_Settings.example.yml**
+
+### Step 5: Run CompleteARR
+
+**For Everything (Recommended):**
 - Run `CompleteARR_Launch_All_Scripts.ps1`
 
-**For TV Shows Only:**
+**For Series Only:**
 - Run `CompleteARR_SONARR_Launcher.ps1`
 
 **For Movies Only:**
 - Run `CompleteARR_RADARR_Launcher.ps1`
 
-## 🔧 Key Features
-
-### Smart Auto-Sorting
-- Uses content ratings (TV-Y, PG, R, etc.)
-- Checks genres and networks for family-friendly hints
-- Respects manual overrides with tags like `LibraryOverride-Family`
-- Extra careful with family content using strict mode
-
-### Completion Tracking (Sonarr)
-- Only shows complete content to your users
-- Automatically monitors special episodes when shows are complete
-- 15-day grace period for new missing episodes
-- Clear separation between incomplete and complete libraries
-
-### Profile Enforcement (Radarr)
-- Ensures movies stay in correct folders based on quality profiles
-- Maintains library organization automatically
-- Prevents movies from drifting between categories
-
-### Safety First
-- Strict family mode for extra protection
-- Clear separation between age groups
-- Conservative handling of unrated content
-
-## 🏷️ Manual Overrides with Tags
-
-You can manually control sorting using these Sonarr/Radarr tags (create them in Settings > Tags):
-
-- **`LibraryOverride-Family`** → Forces to Family target
-- **`LibraryOverride-Adult`** → Forces to Adult target  
-- **`LibraryOverride-Xplicit`** → Treats as explicit content
-- **`LibraryOverride-Anime`** → Forces anime mode (still uses rating for family/adult decision)
+---
 
 ## 💡 Tips for Success
 
-1. **Use the FetchInfo tool first** - It makes setup much easier!
-2. **Set up your Plex/Jellyfin libraries** to only include the "Complete" folders
-3. **Use Sonarr/Radarr tags** to manually override sorting when needed
-4. **Run CompleteARR regularly** (set up a scheduled task)
-5. **Check the logs** in the `CompleteARR_Logs` folder if something doesn't work
-6. **Start with dry runs** by setting `DryRun: true` in your settings
+1. **Use the FetchInfo tool first** – It makes setup much easier!
+2. **Set up your Plex/Jellyfin libraries** to only include the “Complete” folders
+3. **Run CompleteARR regularly** (set up a scheduled task)
+4. **Check the logs** in the `CompleteARR_Logs` folder if something doesn’t work
+5. **Start with dry runs** by setting `DryRun: true` in your settings
+7. **Set GraceDays** to change how long an episode can be considered released, before it counts against a shows completion status.
+
+---
+
+## 📁 Project Structure
+
+### 🎬 Sonarr Scripts:
+- **`CompleteARR_SONARR_Launcher.ps1`** – Runs the Sonarr Series Engine
+- **`CompleteARR_SONARR_SeriesEngine.ps1`** – Manages show completion and special episode monitoring
+
+### 🎥 Radarr Scripts:
+- **`CompleteARR_RADARR_Launcher.ps1`** – Runs the Radarr Film Engine
+- **`CompleteARR_RADARR_FilmEngine.ps1`** – Enforces quality profile‑to‑ root folder mappings
+
+### 🛠️ Helper Tools:
+- **`CompleteARR_FetchInfo_Launcher.ps1`** – Essential setup tool that shows your current Quality Profiles and Root Folders
+- **`CompleteARR_Launch_All_Scripts.ps1`** – Runs the full suite of CompleteARR tools
+
+### ⚙️ Configuration:
+- **`CompleteARR_SONARR_Settings.yml`** – Sonarr‑specific configuration
+- **`CompleteARR_RADARR_Settings.yml`** – Radarr‑specific configuration
+
+---
 
 ## 🔒 What CompleteARR Does NOT Do
 
-- ❌ **Does NOT download content** (that's Sonarr/Radarr's job)
+- ❌ **Does NOT download content**
 - ❌ **Does NOT search for torrents or NZBs**
 - ❌ **Does NOT access the internet** except to talk to your Sonarr/Radarr
-- ❌ **Does NOT modify your media files**
+- ❌ **Does NOT modify your media files**, at most it can just move them between Root Folders.
+
+---
 
 ## ⚖️ Legal & Responsible Use
 
-**Important:** CompleteARR is designed to help you organize media you are legally allowed to have. This includes:
+**Important:** CompleteARR is designed to help you organize media you are legally allowed to have. 
+This includes:
 
-- Media you purchased and ripped yourself
+- Media you purchased and ripped yourself, where allowed by law
 - Personal recordings where allowed by law
-- Content you are explicitly licensed to download
+- Content you are explicitly licensed to download or own
 
 **You are responsible for:**
 - Ensuring your setup complies with local laws
@@ -172,15 +134,25 @@ You can manually control sorting using these Sonarr/Radarr tags (create them in 
 
 By using CompleteARR, you agree to use it responsibly and legally.
 
+---
+
 ## 🆘 Need Help?
 
 1. **Check the logs** in the `CompleteARR_Logs` folder
-2. **Review your settings files** - make sure everything matches your Sonarr/Radarr setup
+2. **Review your settings files** – make sure everything matches your Sonarr/Radarr setup. Refer to the Settings.example.yml
 3. **Use the FetchInfo tool** to verify your configuration
 4. **Start with dry runs** by setting `DryRun: true` in your settings
-5. **Verify your quality profiles and root folders** match what's in your settings
+5. **Verify your quality profiles and root folders** match what’s in your Sonarr/Radarr settings
 
 ---
 
-**CompleteARR v1.0** 🚀
+Thank you so much for using CompleteARR!
 
+CompleteARR started off as a feature I wanted, and became its own little suite of tools, 
+the first of which are included in this release with more to come in the near future. 
+
+These tools are free and will always be free. 
+If you found this tool for a paid download, you did not get it from OP.
+
+If you've found these tools useful and want to donate / tip me,
+Please see the links below. Anything is appreciated, but never expected.
