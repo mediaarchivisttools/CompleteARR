@@ -59,10 +59,10 @@ Create these quality profile pairs (Incomplete/Complete):
 #### 🎬 For Radarr (Movies):
 Create these quality profiles:
 
-- **Family**: `Family Default Settings`
-- **Adult**: `Adult Default Settings`
-- **Anime**: `Anime Default Settings`
-- **Anime Family**: `Anime Family Default Settings`
+- **Family**: `Family`
+- **Adult**: `Adult`
+- **Anime**: `Anime`
+- **Anime Family**: `Anime Family`
 - **Unsorted**: For new content (AutoSorter source)
 
 ### Step 3: Easy Setup with FetchInfo Tool
@@ -92,12 +92,12 @@ This tool will:
    ```
 
 #### For Movies (Radarr):
-1. Copy `CompleteARR_RADARR_Settings.example.yml` to `CompleteARR_RADARR_Settings.yml`
-2. Edit the file with your information from the FetchInfo tool
-3. Set up your Radarr URL and API key
-4. Configure your sort targets with PascalCase keys
+1. Edit the settings YML files with your Radarr/Sonarr IP:Port and API
+2. Run the FetchInfo tool via the launcher, then check the logs to see a list of avaliable
+   Quality Profiles and Root Folders.
+3. Edit the Settings.yml with your information from the FetchInfo tool
 
-### Step 5: Run CompleteARR
+### Step 4: Run CompleteARR
 
 **For Everything:**
 - Run `CompleteARR_Launch_All_Scripts.ps1`
