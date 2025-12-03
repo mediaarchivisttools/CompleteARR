@@ -27,6 +27,7 @@ Open `CompleteARR_SONARR_Settings.yml` & `CompleteARR_RADARR_Settings.yml` in th
 
 ### Step 2: Fill in Your API/IP/Port
 After opening the _Settings.yml files, fill in the API/IP/Port information, but dont proceed any futher down the yml yet.
+**Save** the updated files.
 
 ### Step 3: Run the FetchInfo Tool
 **Run `CompleteARR_FetchInfo_Launcher.ps1` before doing anything else!**
