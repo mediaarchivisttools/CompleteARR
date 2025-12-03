@@ -153,9 +153,7 @@ CompleteARR started off as a feature I wanted, and became its own little suite o
 the first of which are included in this release with more to come in the near future. 
 
 These tools are free and will always be free. 
-If you found this tool for a paid download, you did not get it from OP.
 
-If you've found these tools useful and want to donate / tip me,
-Please see the links below. Anything is appreciated, but never expected.
-
-https://ko-fi.com/mediaarchivisttools
+If these tools have been helpful and you’d like to leave a tip,
+you can use the sponsor links on the main CompleteARR page.
+Support is always appreciated, but never expected.
