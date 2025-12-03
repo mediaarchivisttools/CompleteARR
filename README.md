@@ -35,9 +35,10 @@ After opening the _Settings.yml files, fill in the API/IP/Port information, but 
 This tool will:
 - Connect to your Sonarr and Radarr instances
 - Show you all your quality profiles and root folders
-- Generate a log file (`CompleteARR_Logs/`) with all the information you need for configuration
+- Generate a log file (`CompleteARR_Logs/`) with all the quality profile and root folder information you need to configure your _Settings.ymls
 
 If the FetchInfo Tool cannot connect to Sonarr or Radarr then there is something wrong with the config and CompleteARR won't work.
+Go back and check your IP/Port/API
 
 ### Step 4: Configure Sets (Sonarr) & Mappings (Radarr)
 
@@ -61,7 +62,8 @@ When you match a Quality Profile to a Root Folder with CompleteARR, it automatic
 
 Open `CompleteARR_RADARR_Settings.yml` and fill out the `FilmEngine:` section using the data from the FetchInfo log.
 
-**Format:** `Quality Profile: Root Folder`
+**Format:** 
+`Quality Profile: Root Folder`
 
 **Example configuration for someone who wants family and anime content separated from their main library can be found in the CompleteARR_SONARR_Settings.example.yml**
 
@@ -80,7 +82,7 @@ Open `CompleteARR_RADARR_Settings.yml` and fill out the `FilmEngine:` section us
 
 ## 💡 Tips for Success
 
-1. **Use the FetchInfo tool first** – It makes setup much easier!
+1. **Use the FetchInfo tool** – It makes setup much easier!
 2. **Set up your Plex/Jellyfin libraries** to only include the “Complete” folders
 3. **Run CompleteARR regularly** (set up a scheduled task)
 4. **Check the logs** in the `CompleteARR_Logs` folder if something doesn’t work
@@ -128,7 +130,7 @@ This includes:
 - Content you are explicitly licensed to download or own
 
 **You are responsible for:**
-- Ensuring your setup complies with local laws
+- Ensuring your setup complies with your local laws
 - Respecting terms of service for any services you use
 - Only using CompleteARR with content you have rights to
 
@@ -156,5 +158,5 @@ the first of which are included in this release with more to come in the near fu
 These tools are free and will always be free. 
 
 If these tools have been helpful and you’d like to leave a tip,
-you can use the sponsor links on the main CompleteARR page.
+please use the sponsor links on the main CompleteARR page.
 Support is always appreciated, but never expected.
