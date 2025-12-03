@@ -2,8 +2,7 @@
 
 # CompleteARR - All or Nothing!
 
-CompleteARR is your automated media librarian obsessed with making sure all your films are in the right Root Folders and 
-your series only show up on Plex/Jellyfin/Emby if they are complete; without any missing episodes.
+CompleteARR works as your automated media librarian, organizing films into the proper root folders and ensuring that Plex/Jellyfin/Emby only see series with every episode present.
 
 ---
 
