@@ -102,7 +102,7 @@ Open `CompleteARR_RADARR_Settings.yml` and fill out the `FilmEngine:` section us
 - **`CompleteARR_RADARR_FilmEngine.ps1`** – Enforces quality profile‑to‑ root folder mappings
 
 ### 🛠️ Helper Tools:
-- **`CompleteARR_FetchInfo_Launcher.ps1`** – Essential setup tool that shows your current Quality Profiles and Root Folders
+- **`CompleteARR_FetchInfo.ps1`** – Essential setup tool that shows your current Quality Profiles and Root Folders, launch with **`CompleteARR_FetchInfo_Launcher.ps1`**
 - **`CompleteARR_Launch_All_Scripts.ps1`** – Runs the full suite of CompleteARR tools
 
 ### ⚙️ Configuration:
